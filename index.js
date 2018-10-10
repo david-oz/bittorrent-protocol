@@ -335,7 +335,7 @@ class Wire extends stream.Duplex {
     this.uploaded += buffer.length
     this.uploadSpeed(buffer.length)
     this._message(7, [index, offset], buffer)
-    this.emit('upload', buffer.length)
+    this.emit('upload', index, buffer.length)
   }
 
   /**
