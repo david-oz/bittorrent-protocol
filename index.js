@@ -263,6 +263,7 @@ class Wire extends stream.Duplex {
     if (!this.amChoking) return
     this.amChoking = false
     this._debug('unchoke')
+    this._debug('my unchoke')
     this._push(MESSAGE_UNCHOKE)
   }
 
