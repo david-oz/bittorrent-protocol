@@ -85,9 +85,8 @@ class Wire extends stream.Duplex {
 
     this._buffer = [] // incomplete message data
     this._bufferSize = 0 // cached total length of buffers in `this._buffer`
-
+    this.lanIp = this.getOwnLanIp()
     this.on('finish', this._onFinish)
-
     this._parseHandshake()
   }
 
@@ -741,6 +740,32 @@ class Wire extends stream.Duplex {
       }
     }
     return null
+  }
+
+  getOwnLanIp () {
+    let os = require('os')
+    let ifaces = os.networkInterfaces()
+    for (let ifname in ifaces) {
+      if (ifaces.hasOwnProperty(ifname)) {
+        let alias = 0
+        for (let ifaceKey in ifaces[ifname]) {
+          let iface = ifaces[ifname][ifaceKey]
+          if (iface.family !== 'IPv4' || iface.internal !== false) {
+            // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+            continue
+          }
+
+          if (alias >= 1) {
+            // this single interface has multiple ipv4 addresses
+            console.log(ifname + ':' + alias, iface.address)
+          } else {
+            // this interface has only one ipv4 adress
+            return iface.address
+          }
+          ++alias
+        }
+      }
+    }
   }
 }
 
